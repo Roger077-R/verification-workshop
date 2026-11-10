@@ -5,3 +5,4 @@ tools/*.zip
 .idea/
 tools/lib/
 grade-results/
+*.deb
