@@ -22,9 +22,11 @@ public class BinarySearchCheck {
         }
     }
 
-    // TODO (7): the contract of midpoint, as a harness
     //   ./bmc BinarySearchCheck.midpoint --unwind 1
     public static void midpoint(int lo, int hi) {
-        assert false;   // remove this line
+        CProver.assume(lo >= 0 && hi >= 0 && lo <= hi);
+        // int mid = (lo + hi) / 2;
+        int mid = lo + (hi - lo) / 2;
+        assert mid >= lo && mid <= hi;
     }
 }

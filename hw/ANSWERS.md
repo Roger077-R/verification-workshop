@@ -126,8 +126,15 @@ A: OpenJML needed an inductive loop invariant relating `s` to `i` (and a decreas
 
 Q: Why does JBMC miss the bug with the `search` harness? Could a larger bound help?
 
+A: JBMC misses it since we assumed that the length of the array is at most 5. Even if `hi` and `lo` both reach the highest value possible,
+`hi + lo` will not exceed `INT_MAX`. Therefore, it misses the bug.
+A larger bound could help, but with proper settings, such as larger loop unroll.
+
 
 Q: What did the `midpoint` harness find?
+
+It finds that with large enough input (e.g. `lo` be 630071278, `hi` be 1807605771) that causes addition overflow, midpoint would produce incorrect return value.
+With fixed one, it passes the verification.
 
 
 ## Comparison
