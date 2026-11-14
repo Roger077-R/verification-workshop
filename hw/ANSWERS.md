@@ -61,6 +61,7 @@ NOT VERIFIED: see the messages above
 ```
 
 which can be produced by setting `lo` and `hi` both be `INT_MAX`. The array must be at least 1,073,741,734 elements.
+In addition, the specification does not stress the relation of `lo` and `hi`, which may violate the ensure clause.
 
 Q: What happens without `/*@ pure @*/` on `midpoint`, and why?
 
