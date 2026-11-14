@@ -1,6 +1,6 @@
 # Homework: answers
 
-Name(s):
+Name(s): Range Feng, Hongchen Zhao
 
 ## OpenJML
 
@@ -8,9 +8,22 @@ Name(s):
 
 Q: What does OpenJML complain about before you write a contract, and for which input?
 
+A: It conplains about the following for input `n`
+
+```text
+hw/Absolute.java:9: verify: The prover cannot establish an assertion (ArithmeticOperationRange) in method abs: int negation
+            return -n;
+                   ^
+1 verification failure
+NOT VERIFIED: see the messages above
+```
+
 
 Q: Which `requires` did you need, and why? Could you avoid it by changing the `ensures`?
 
+A: We need `requires n > -2147483468 && n <= 2147483467` since two's complement encoding is not symmetric,
+i.e. there is no 2147483468 since -(-2147483468) yields -2147483468 again. We canno tavoid changing `ensures`
+clause since it is used for verifying the return value.
 
 ### 2. SumX
 
