@@ -25,7 +25,7 @@ else
     mkdir -p tools
     # -C - resumes an interrupted download
     for attempt in 1 2 3 4 5; do
-        curl -fL -C - --retry 3 -o "tools/$zip" "$url" && break
+        curl -fL  --retry 3 -o "tools/$zip" "$url" && break
         echo "download interrupted, resuming ($attempt)..."
     done
     rm -rf tools/openjml
