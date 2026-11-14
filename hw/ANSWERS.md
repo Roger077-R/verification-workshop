@@ -146,7 +146,7 @@ With fixed one, it passes the verification.
 | --- | --- | --- |
 | SumX | Verified for `0 <= x <= 1000` with loop invariants | Successful with `--unwind 1001` and the same input bound |
 | Max | Verified after fixing the loop bound and adding invariants and a decreases clause | Successful with `--unwind 5 --max-nondet-array-length 4` |
-| BinarySearch | | |
+| BinarySearch | Verified fixed computation for midpoint `lo + (hi - lo) / 2` | Successful with `--unwind 6 --max-nondet-array-length 5` for `search` and `--unwind 1` for `midpoint` specification |
 
 Q: When would you use each tool?
 
