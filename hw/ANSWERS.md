@@ -15,7 +15,6 @@ hw/Absolute.java:9: verify: The prover cannot establish an assertion (Arithmetic
             return -n;
                    ^
 1 verification failure
-NOT VERIFIED: see the messages above
 ```
 
 
@@ -45,9 +44,55 @@ A: The remaining failure is caused by the code, not by a missing invariant. The 
 
 Q: What does OpenJML report, in which method, and for which concrete call? How large must the array be?
 
+A: It reports the following in method `midpoint`
+
+```text
+hw/BinarySearch.java:8: verify: The prover cannot establish an assertion (ArithmeticOperationRange) in method midpoint: overflow in int sum
+        return (lo + hi) / 2;
+                   ^
+hw/BinarySearch.java:8: verify: The prover cannot establish an assertion (Postcondition: hw/BinarySearch.java:6:) in method midpoint
+        return (lo + hi) / 2;
+        ^
+hw/BinarySearch.java:6: verify: Associated declaration: hw/BinarySearch.java:8:
+    //@ ensures lo <= \result && \result <= hi;
+        ^
+3 verification failures
+NOT VERIFIED: see the messages above
+```
+
+which can be produced by setting `lo` and `hi` both be `INT_MAX`. The array must be at least 1,073,741,734 elements.
 
 Q: What happens without `/*@ pure @*/` on `midpoint`, and why?
 
+A: Removing it produces even more verification failures as follows
+
+```text
+hw/BinarySearch.java:8: verify: The prover cannot establish an assertion (ArithmeticOperationRange) in method midpoint: overflow in int sum
+        return (lo + hi) / 2;
+                   ^
+hw/BinarySearch.java:8: verify: The prover cannot establish an assertion (Postcondition: hw/BinarySearch.java:6:) in method midpoint
+        return (lo + hi) / 2;
+        ^
+hw/BinarySearch.java:6: verify: Associated declaration: hw/BinarySearch.java:8:
+    //@ ensures lo <= \result && \result <= hi;
+        ^
+hw/BinarySearch.java:21: verify: The prover cannot establish an assertion (Assignable: hw/BinarySearch.java:20:) in method search: \everything
+            int mid = midpoint(lo, hi);
+                              ^
+hw/BinarySearch.java:20: verify: Associated declaration: hw/BinarySearch.java:21:
+        while (lo <= hi) {
+        ^
+hw/BinarySearch.java:18: verify: The prover cannot establish an assertion (LoopInvariant) in method search
+        //@ loop_invariant (\forall int j; hi < j && j < a.length; a[j] > key);
+            ^
+hw/BinarySearch.java:17: verify: The prover cannot establish an assertion (LoopInvariant) in method search
+        //@ loop_invariant (\forall int j; 0 <= j && j < lo; a[j] < key);
+            ^
+7 verification failures
+```
+
+The new failures are all inside `search` method since `midpoint` is no longer pure, which implies that `lo` and `hi` may be changed by `midpoint`,
+breaking the loop invariants.
 
 ## JBMC
 
