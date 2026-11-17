@@ -8,7 +8,8 @@ public class SumX {
         int s = 0, i = 0;
         // TODO (2): this invariant is true, but is it enough?
         //@ loop_invariant 0 <= i && i <= x;
-        //@ loop_invariant s == i * (i + 1) / 2; This is the extra loop invariant we need to add to prove the postcondition.
+        // This is the extra loop invariant we need to add to prove the postcondition.
+        //@ loop_invariant s == i * (i + 1) / 2;
         //@ decreases x - i;
         while (i < x) {
             i = i + 1;
