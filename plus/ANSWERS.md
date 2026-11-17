@@ -6,14 +6,86 @@ Name(s):
 
 | method | LLM | rounds | mistakes | final invariants by |
 | --- | --- | --- | --- | --- |
-| count | | | | |
-| reverse | | | | |
-| isqrt | | | | |
-| dutchFlag | | | | |
+| count | Codex (GPT-6) | 1 | None reported | Codex, verified by OpenJML |
+| reverse | Codex (GPT-6) | 1 | None reported | Codex, verified by OpenJML |
+| isqrt | Codex (GPT-6) | 1 | None reported | Codex, verified by OpenJML |
+| dutchFlag | Codex (GPT-6) | 1 | None reported | Codex, verified by OpenJML |
+
+OpenJML 21.0.29 with Z3 5.1.0 verified all four methods with `./esc plus/LlmLoops.java --progress`.
 
 
 Q: Why is it safe to use invariants written by an LLM here, even if the LLM is often wrong?
 
+A: OpenJML checks that each invariant holds on entry and is preserved by every iteration. At exit, it uses the invariant and the false guard to prove the method's postcondition. It also checks that the `decreases` expression is nonnegative when the loop body runs and strictly decreases with each iteration. The LLM supplies candidate annotations, and OpenJML decides whether they establish the specified properties.
+
+#### Preconditions and loop annotations
+
+The `requires` clauses below go before their methods. Each loop's annotations go immediately before its `for` or `while` statement.
+
+**`count`**
+
+```java
+//@ requires a != null;
+```
+
+```java
+//@ loop_invariant 0 <= i && i <= a.length;
+//@ loop_invariant 0 <= c && c <= i;
+//@ loop_invariant c == (\num_of int k; 0 <= k && k < i; a[k] == x);
+//@ decreases a.length - i;
+```
+
+After processing `a[0..i)`, `c` counts exactly the entries equal to `x`. Since `c <= i` and the guard gives `i < a.length`, incrementing `c` cannot overflow.
+
+**`reverse`**
+
+```java
+//@ requires a != null;
+```
+
+```java
+//@ loop_invariant 0 <= i && i <= a.length;
+//@ loop_invariant -1 <= j && j < a.length;
+//@ loop_invariant j == a.length - 1 - i && i <= j + 1;
+//@ loop_invariant (\forall int k; 0 <= k && k < a.length && (k < i || j < k);
+//@     a[k] == \old(a[a.length - 1 - k]));
+//@ loop_invariant (\forall int k; i <= k && k <= j; a[k] == \old(a[k]));
+//@ decreases j - i + 1;
+```
+
+The endpoints `i` and `j` are mirror indices. Positions outside `[i,j]` have their final values, and positions inside still have their entry values. If the loop leaves a single middle element, its mirror index is itself.
+
+**`isqrt`**
+
+```java
+//@ requires 0 <= n && n <= 1000000;
+```
+
+```java
+//@ loop_invariant 0 <= r && r <= 1000;
+//@ loop_invariant r * r <= n;
+//@ decreases 1000 - r;
+```
+
+The upper bound on `r` keeps `(r + 1) * (r + 1)` within the Java `int` range. The invariant gives the lower bound on `n`, and the false guard at exit gives the upper bound.
+
+**`dutchFlag`**
+
+```java
+//@ requires a != null;
+//@ requires (\forall int k; 0 <= k && k < a.length; 0 <= a[k] && a[k] <= 2);
+```
+
+```java
+//@ loop_invariant 0 <= lo && lo <= mid && mid <= hi && hi <= a.length;
+//@ loop_invariant (\forall int k; 0 <= k && k < lo; a[k] == 0);
+//@ loop_invariant (\forall int k; lo <= k && k < mid; a[k] == 1);
+//@ loop_invariant (\forall int k; mid <= k && k < hi; 0 <= a[k] && a[k] <= 2);
+//@ loop_invariant (\forall int k; hi <= k && k < a.length; a[k] == 2);
+//@ decreases hi - mid;
+```
+
+The loop maintains a prefix of zeros, then ones, then an unprocessed region, then a suffix of twos. When `mid == hi`, the unprocessed region is empty, so the array is sorted.
 
 ### 2. The Zune bug
 
