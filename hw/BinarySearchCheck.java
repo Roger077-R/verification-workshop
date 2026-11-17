@@ -25,8 +25,7 @@ public class BinarySearchCheck {
     //   ./bmc BinarySearchCheck.midpoint --unwind 1
     public static void midpoint(int lo, int hi) {
         CProver.assume(lo >= 0 && hi >= 0 && lo <= hi);
-        // int mid = (lo + hi) / 2;
-        int mid = lo + (hi - lo) / 2;
+        int mid = BinarySearch.midpoint(lo, hi);
         assert mid >= lo && mid <= hi;
     }
 }
