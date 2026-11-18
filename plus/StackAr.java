@@ -12,38 +12,64 @@ public class StackAr {
     /** Index of the top element (-1 when the stack is empty). */
     private /*@ spec_public @*/ int top = -1;
 
-    // TODO (4): class invariant
+    //@ public invariant top >= -1;
+    //@ public invariant top < elems.length;
+    //@ public invariant elems.length < Integer.MAX_VALUE;
 
-    // TODO (4): specify every constructor and method
+    //@ ensures elems.length == DEFAULT_CAPACITY;
     public StackAr() {
         this(DEFAULT_CAPACITY);
     }
 
+    //@ requires capacity >= 0 && capacity < Integer.MAX_VALUE;
+    //@ ensures elems.length == capacity;
     public StackAr(int capacity) {
-        throw new UnsupportedOperationException("Not implemented yet");
+        elems = new int[capacity];
     }
 
+    //@ ensures \result == (top == -1);
     public /*@ pure @*/ boolean isEmpty() {
-        throw new UnsupportedOperationException("Not implemented yet");
+        return top == -1;
     }
 
+    //@ ensures \result == (top == elems.length - 1);
     public /*@ pure @*/ boolean isFull() {
-        throw new UnsupportedOperationException("Not implemented yet");
+        return top == elems.length - 1;
     }
 
     public /*@ pure @*/ int size() {
-        throw new UnsupportedOperationException("Not implemented yet");
+        return top + 1;
     }
 
+    //@ requires top < elems.length - 1;
+    //@ ensures top == \old(top) + 1;
+    //@ ensures elems[top] == o;
     public void push(int o) {
-        throw new UnsupportedOperationException("Not implemented yet");
+        if(isFull()) {
+            throw new IllegalStateException("Stack is full");
+        }
+
+        elems[++top] = o;
     }
 
+    //@ requires top > -1;
+    //@ ensures top == \old(top) - 1;
+    //@ ensures \result == elems[\old(top)];
     public int pop() {
-        throw new UnsupportedOperationException("Not implemented yet");
+        if(isEmpty()) {
+            throw new IllegalStateException("Stack is empty");
+        }
+
+        return elems[top--];
     }
 
+    //@ requires top > -1;
+    //@ ensures \result == elems[top];
     public /*@ pure @*/ int peek() {
-        throw new UnsupportedOperationException("Not implemented yet");
+        if(isEmpty()) {
+            throw new IllegalStateException("Stack is empty");
+        }
+
+        return elems[top];
     }
 }
