@@ -5,7 +5,8 @@ import org.cprover.CProver;
 public class RangeCheck {
 
     public static void size(int lo, int hi) {
-        // TODO (3): build a valid Range and check the contract of size()
-        assert false;   // remove this line
+        CProver.assume(lo <= hi);
+        long size = new Range(lo, hi).size();
+        assert(size == (long) hi - lo + 1);
     }
 }

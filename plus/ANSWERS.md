@@ -111,8 +111,16 @@ Q (★): Why does `./esc` say OK on the original? What changes with `decreases`?
 
 Q: Why does `size()` not verify? Give concrete values.
 
+A: It does not verify since there is a potential overflow issue. For example, `hi` be maximum of int value and `lo` be 0 since
+incrementing `hi` would overflow.
+
 
 Q: Compare JBMC's counterexample with your answer above.
+
+A: JBMC gives the counterexample of `hi` be 1491599252 and `lo` be -1496580019, whose sum in absolute value exceeds the maximum
+value of integer. They both result in an arithmetic overflow.
+
+Fixed the issue by using represent the size in `long`. 
 
 
 ### 4. StackAr
