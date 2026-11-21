@@ -91,20 +91,36 @@ The loop maintains a prefix of zeros, then ones, then an unprocessed region, the
 
 Q: `--unwind 31 --no-unwinding-assertions` says SUCCESSFUL. Does that mean `yearOf` is correct for every day it checked?
 
+A: No, it only unrolls the first 31 loops, and will miss the potential infinite loops if there is one.
+It will also miss the bugs for more than 31 loops, but it is not the case here since the method is only for the first 30 years. 
+
 
 Q: What does JBMC report without `--no-unwinding-assertions`? Is K too small, or is something else wrong?
+
+A: It reports an infinite loop with `days` be 1827. `K` is not too small here.
 
 
 Q: What is wrong with the loop? Which date froze the Zune?
 
+A: The loop misses the case where there the days decreases as year increases until exactly 366 days remains and the year is a leap year at the same time.
+The date froze Zune is 1827 days since the year 1980, which is 1 Jan, 1985.
+
 
 Q: With your fix, what is the smallest K that gives VERIFICATION SUCCESSFUL with unwinding assertions? What exactly has been proved?
+
+A: The smallest K is 22 with the fix.
+It proves that `yearOf` method places days within 365*30 days back to the first 30 years without proving the exact year of the day.
 
 
 Q: A colleague changes `days > 366` to `days >= 366`. Which harness notices, and why?
 
+A: OpenJML notices since it breaks the loop invariant.
+
 
 Q (★): Why does `./esc` say OK on the original? What changes with `decreases`?
+
+A: It says OK on the original since it satisfies the specifications. `decreases` requires `days` to decrease or `years` to increase,
+which is not true if it is leap year but misses inner `days` check.
 
 
 ### 3. Range

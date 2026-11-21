@@ -20,6 +20,9 @@ public class Zune {
                 if (days > 366) {
                     days -= 366;
                     year += 1;
+                } else {
+                    // days == 366, which is the last day of current year
+                    break;
                 }
             } else {
                 days -= 365;
