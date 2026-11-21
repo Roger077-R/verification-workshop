@@ -131,10 +131,24 @@ Q: Which tool reports your bug, and how? Could a bug get past OpenJML but not JB
 
 Q: Smallest K that finds a bug? Which sequence of events? What is wrong in the code?
 
+A: The smallest K that finds a bug is 5.
+The sequence of events is entering pin -1078972882, entering pin -1078972882, close, entering pin -1615811026, and entering pin -1615843794.
+When calling `close`, `failed` counter resets even when the lock does not open,
+which enables us to close the door before exceeding maximum attempts for infinite attempts.
 
 Q: Formula size and time for K = 8, 10, 12.
+
+A: The table is the following
+
+| K | Formula size | Time |
+|:--|:-------------|:-----|
+|8  |46050 variables, 68865 clauses|0.15s|
+|10 |56941 variables, 87971 clauses|0.29s|
+|12 |67836 variables, 107563 clauses|0.54s|
 
 
 Q: Does SUCCESSFUL with K = 12 mean the property holds for every sequence? Can unwinding assertions help?
 
+A: No, it only shows that the property holds for sequences of at most 12 events.
+The unwinding assertions cannot help since it cannot prove unbounded sequences.
 
